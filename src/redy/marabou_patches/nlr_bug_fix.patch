@@ -1,0 +1,70 @@
+diff --git a/src/engine/InputQuery.cpp b/src/engine/InputQuery.cpp
+index 8fff0c3a..84c06392 100644
+--- a/src/engine/InputQuery.cpp
++++ b/src/engine/InputQuery.cpp
+@@ -249,9 +249,9 @@ InputQuery &InputQuery::operator=( const InputQuery &other )
+     }
+     else
+     {
+-        INPUT_QUERY_LOG( Stringf( "Number of piecewise linear constraints in input query: %u",
++        printf( Stringf( "Number of piecewise linear constraints in input query: %u\n",
+                                   other._plConstraints.size() ).ascii() );
+-        INPUT_QUERY_LOG( Stringf( "Number of piecewise linear constraints in topological order %u",
++        printf( Stringf( "Number of piecewise linear constraints in topological order %u\n",
+                                   other._networkLevelReasoner->getConstraintsInTopologicalOrder().size() ).ascii() );
+ 
+         unsigned numberOfDisjunctions = 0;
+@@ -274,10 +274,13 @@ InputQuery &InputQuery::operator=( const InputQuery &other )
+             
+         }
+ 
+-        ASSERT( other._networkLevelReasoner->getConstraintsInTopologicalOrder().size() +
++        if ( other._networkLevelReasoner->getConstraintsInTopologicalOrder().size() +
+                 numberOfDisjunctions +
+                 numberOfMaxs
+-                == other._plConstraints.size() );
++                != other._plConstraints.size() ) {
++            printf(" -- NLR BUG encountered, aborting! -- \n");
++            exit(1);
++        }
+ 
+         for ( const auto &constraint : other._networkLevelReasoner->
+                   getConstraintsInTopologicalOrder() )
+diff --git a/src/nlr/DeepPolyWeightedSumElement.cpp b/src/nlr/DeepPolyWeightedSumElement.cpp
+index d3d61108..cb60e053 100644
+--- a/src/nlr/DeepPolyWeightedSumElement.cpp
++++ b/src/nlr/DeepPolyWeightedSumElement.cpp
+@@ -170,6 +170,7 @@ void DeepPolyWeightedSumElement::computeBoundWithBackSubstitution
+             log( Stringf( "merge residual from layer %u - done", predecessorIndex ) );
+         }
+ 
++        /*
+         DEBUG({
+                 // Residual layers topologically after precedingElement should
+                 // have been merged already.
+@@ -178,6 +179,7 @@ void DeepPolyWeightedSumElement::computeBoundWithBackSubstitution
+                     ASSERT( residualLayerIndex < predecessorIndex );
+                 }
+             });
++        */
+ 
+         double *temp = _work1SymbolicLb;
+         _work1SymbolicLb = _work2SymbolicLb;
+@@ -192,7 +194,7 @@ void DeepPolyWeightedSumElement::computeBoundWithBackSubstitution
+                                  _workSymbolicLowerBias, _workSymbolicUpperBias,
+                                  currentElement, deepPolyElementsBefore );
+     }
+-    ASSERT( _residualLayerIndices.empty() );
++    // ASSERT( _residualLayerIndices.empty() );
+     log( "Computing bounds with back substitution - done" );
+ }
+ 
+@@ -212,7 +214,7 @@ void DeepPolyWeightedSumElement::concretizeSymbolicBound
+ 
+     for ( const auto &residualLayerIndex : _residualLayerIndices )
+     {
+-        ASSERT( residualLayerIndex < sourceElement->getLayerIndex() );
++        // ASSERT( residualLayerIndex < sourceElement->getLayerIndex() );
+         DeepPolyElement *residualElement =
+             deepPolyElementsBefore[residualLayerIndex];
+         concretizeSymbolicBoundForSourceLayer( _residualLb[residualLayerIndex],

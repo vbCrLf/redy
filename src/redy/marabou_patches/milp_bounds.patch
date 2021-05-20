@@ -1,0 +1,30 @@
+diff --git a/src/configuration/GlobalConfiguration.cpp b/src/configuration/GlobalConfiguration.cpp
+index 019bf632..fcc2e99d 100644
+--- a/src/configuration/GlobalConfiguration.cpp
++++ b/src/configuration/GlobalConfiguration.cpp
+@@ -55,7 +55,7 @@ const bool GlobalConfiguration::USE_HARRIS_RATIO_TEST = true;
+ const double GlobalConfiguration::SYMBOLIC_TIGHTENING_ROUNDING_CONSTANT = 0.00000005;
+ 
+ const bool GlobalConfiguration::PREPROCESS_INPUT_QUERY = true;
+-const bool GlobalConfiguration::PREPROCESSOR_ELIMINATE_VARIABLES = true;
++const bool GlobalConfiguration::PREPROCESSOR_ELIMINATE_VARIABLES = false;
+ const bool GlobalConfiguration::PREPROCESSOR_PL_CONSTRAINTS_ADD_AUX_EQUATIONS = true;
+ const double GlobalConfiguration::PREPROCESSOR_ALMOST_FIXED_THRESHOLD = 0.00001;
+ const bool GlobalConfiguration::PREPROCESSOR_MERGE_CONSECUTIVE_WEIGHTED_SUMS = false;
+diff --git a/src/engine/Engine.cpp b/src/engine/Engine.cpp
+index 33e77b09..c66a51b7 100644
+--- a/src/engine/Engine.cpp
++++ b/src/engine/Engine.cpp
+@@ -1112,8 +1112,11 @@ bool Engine::processInputQuery( InputQuery &inputQuery, bool preprocess )
+             performMILPSolverBoundedTightening();
+         }
+ 
+-        if ( Options::get()->getBool( Options::DUMP_BOUNDS ) )
++        if ( Options::get()->getBool( Options::DUMP_BOUNDS ) ) {
+             _networkLevelReasoner->dumpBounds();
++            _exitCode = Engine::UNSAT;
++            return false;
++        }
+ 
+         if ( _splittingStrategy == DivideStrategy::Auto )
+         {
