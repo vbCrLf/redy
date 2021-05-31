@@ -1,7 +1,7 @@
 # Redy
 A research framework for finding redundancies in neural networks.
 
-See the paper (not yet released) for more information (Pruning and Slicing Neural Networks using Formal Verification, 2021, Ori Lahav and Guy Katz).
+See the paper for more information ([Pruning and Slicing Neural Networks using Formal Verification, 2021, Ori Lahav and Guy Katz](https://arxiv.org/abs/2105.13649)).
 
 Uses Marabou and Maraboupy as backend. See https://github.com/NeuralNetworkVerification/Marabou. Note that many other verification engines can be used as an alternative backends.
 
